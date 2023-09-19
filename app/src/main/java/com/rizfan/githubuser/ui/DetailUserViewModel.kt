@@ -1,6 +1,6 @@
 package com.rizfan.githubuser.ui
 
-import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,13 +41,13 @@ class DetailUserViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _detailUser.value = response.body()
                 } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
+                    Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<DetailUserResponse>, t: Throwable) {
                 _isLoading.value = false
-                Log.e(TAG, "onFailure: ${t.message.toString()}")
+                Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -64,13 +64,13 @@ class DetailUserViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _listFollowers.postValue(response.body())
                 } else {
-                    Log.e(MainViewModel.TAG, "onFailure: ${response.message()}")
+                    Toast.makeText(null, "Gagal mendapatkan Data Follower!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<ItemsItem>>, t: Throwable) {
                 _isLoading.value = false
-                Log.e(MainViewModel.TAG, "onFailure: ${t.message.toString()}")
+                Toast.makeText(null, "Gagal mendapatkan Data Follower!", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -87,13 +87,13 @@ class DetailUserViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _listFollowing.postValue(response.body())
                 } else {
-                    Log.e(MainViewModel.TAG, "onFailure: ${response.message()}")
+                    Toast.makeText(null, "Gagal mendapatkan Data Following!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<ItemsItem>>, t: Throwable) {
                 _isLoading.value = false
-                Log.e(MainViewModel.TAG, "onFailure: ${t.message.toString()}")
+                Toast.makeText(null, "Gagal mendapatkan Data Following!", Toast.LENGTH_SHORT).show()
             }
         })
     }

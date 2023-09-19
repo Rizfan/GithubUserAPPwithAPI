@@ -2,6 +2,7 @@ package com.rizfan.githubuser.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
@@ -16,14 +17,10 @@ class DetailUserActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityDetailUserBinding
 
-    companion object {
-        const val username = "username"
-    }
 
     @SuppressLint("StringFormatMatches")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail_user)
 
         binding = ActivityDetailUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -55,25 +52,27 @@ class DetailUserActivity : AppCompatActivity(){
         detailUserViewModel.isLoading.observe(this) {
             showLoading(it)
         }
-
-
     }
 
     private fun setDetailUserData(detailUser: DetailUserResponse) {
         with(binding){
             tvLogin.text = detailUser.login
             tvNamaLengkap.text = detailUser.name
-            Glide.with(this@DetailUserActivity)
-                .load(detailUser.avatarUrl)
-                .into(ivAvatar)
+            ivAvatar.loadImage(detailUser.avatarUrl)
         }
     }
 
-    private fun showLoading(state: Boolean) {
-        if (state) {
-            binding.progressBar.visibility = android.view.View.VISIBLE
-        } else {
-            binding.progressBar.visibility = android.view.View.GONE
-        }
+
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) android.view.View.VISIBLE else android.view.View.GONE
+    }
+
+    fun ImageView.loadImage(url: String?) {
+        Glide.with(this.context)
+            .load(url)
+            .into(this)
+    }
+    companion object {
+        const val username = "username"
     }
 }

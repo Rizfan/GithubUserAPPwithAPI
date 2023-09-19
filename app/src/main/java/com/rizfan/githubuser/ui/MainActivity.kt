@@ -1,7 +1,6 @@
 package com.rizfan.githubuser.ui
 
 import android.os.Bundle
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,8 +42,6 @@ class MainActivity : AppCompatActivity() {
                     false
                 }
         }
-
-
     }
 
     private fun setUserList(listUser: List<ItemsItem>?) {
@@ -54,11 +51,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLoading(isLoading: Boolean) {
-        if (isLoading) {
-            binding.progressBar.visibility = View.VISIBLE
-        } else {
-            binding.progressBar.visibility = View.GONE
-        }
+        binding.progressBar.visibility = if (isLoading) android.view.View.VISIBLE else android.view.View.GONE
     }
 
 }

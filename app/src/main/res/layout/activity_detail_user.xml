@@ -13,6 +13,7 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginTop="24dp"
+            android:contentDescription="@string/avatar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +29,8 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivAvatar" />
+            app:layout_constraintTop_toBottomOf="@+id/ivAvatar"
+            tools:text="Lorem Ipsum"/>
 
         <TextView
             android:id="@+id/tvNamaLengkap"
@@ -39,7 +41,8 @@
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvLogin" />
+            app:layout_constraintTop_toBottomOf="@+id/tvLogin"
+            tools:text="Lorem Ipsum"/>
 
     <LinearLayout
         android:id="@+id/llTab"
@@ -57,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:contentDescription="@string/tab_layout" />
+            android:contentDescription="@string/tab_layout"/>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager"

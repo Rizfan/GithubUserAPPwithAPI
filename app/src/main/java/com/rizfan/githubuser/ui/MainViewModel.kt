@@ -1,6 +1,6 @@
 package com.rizfan.githubuser.ui
 
-import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -40,13 +40,13 @@ class MainViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _listUser.value = response.body()?.items
                 } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
+                    Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
                 _isLoading.value = false
-                Log.e(TAG, "onFailure: ${t.message.toString()}")
+                Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
             }
         })
     }
@@ -63,13 +63,13 @@ class MainViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _listUser.value = response.body()?.items
                 } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
+                    Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
                 _isLoading.value = false
-                Log.e(TAG, "onFailure: ${t.message.toString()}")
+                Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
             }
         })
     }
