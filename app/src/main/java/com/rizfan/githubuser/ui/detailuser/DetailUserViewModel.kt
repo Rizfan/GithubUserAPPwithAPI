@@ -1,6 +1,5 @@
-package com.rizfan.githubuser.ui
+package com.rizfan.githubuser.ui.detailuser
 
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,9 +24,8 @@ class DetailUserViewModel : ViewModel() {
     private val _listFollowing = MutableLiveData<List<ItemsItem>>()
     val listFollowing: MutableLiveData<List<ItemsItem>> = _listFollowing
 
-    companion object {
-        const val TAG = "DetailUserViewModel"
-    }
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String> = _errorMessage
 
     fun getDetailUser(username: String) {
         _isLoading.value = true
@@ -39,15 +37,19 @@ class DetailUserViewModel : ViewModel() {
             ) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
-                    _detailUser.value = response.body()
+                    if (response.body() == null) {
+                        _errorMessage.value = "Gagal mendapatkan Data User!"
+                    } else {
+                        _detailUser.value = response.body()
+                    }
                 } else {
-                    Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
+                    _errorMessage.value = "Gagal mendapatkan Data User!"
                 }
             }
 
             override fun onFailure(call: Call<DetailUserResponse>, t: Throwable) {
                 _isLoading.value = false
-                Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
+                _errorMessage.value = "Gagal mendapatkan Data User!"
             }
         })
     }
@@ -64,13 +66,13 @@ class DetailUserViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _listFollowers.postValue(response.body())
                 } else {
-                    Toast.makeText(null, "Gagal mendapatkan Data Follower!", Toast.LENGTH_SHORT).show()
+                    _errorMessage.value = "Gagal mendapatkan Data Follower!"
                 }
             }
 
             override fun onFailure(call: Call<List<ItemsItem>>, t: Throwable) {
                 _isLoading.value = false
-                Toast.makeText(null, "Gagal mendapatkan Data Follower!", Toast.LENGTH_SHORT).show()
+                _errorMessage.value = "Gagal mendapatkan Data Follower!"
             }
         })
     }
@@ -87,13 +89,13 @@ class DetailUserViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _listFollowing.postValue(response.body())
                 } else {
-                    Toast.makeText(null, "Gagal mendapatkan Data Following!", Toast.LENGTH_SHORT).show()
+                    _errorMessage.value = "Gagal mendapatkan Data Following!"
                 }
             }
 
             override fun onFailure(call: Call<List<ItemsItem>>, t: Throwable) {
                 _isLoading.value = false
-                Toast.makeText(null, "Gagal mendapatkan Data Following!", Toast.LENGTH_SHORT).show()
+                _errorMessage.value = "Gagal mendapatkan Data Following!"
             }
         })
     }

@@ -1,4 +1,4 @@
-package com.rizfan.githubuser.ui
+package com.rizfan.githubuser.ui.detailuser
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.rizfan.githubuser.R
 import com.rizfan.githubuser.data.response.ItemsItem
 import com.rizfan.githubuser.databinding.FragmentFollowersBinding
+import com.rizfan.githubuser.ui.main.UserAdapter
 
 class FollowersFragment : Fragment() {
 
     private lateinit var binding: FragmentFollowersBinding
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -23,7 +23,8 @@ class FollowersFragment : Fragment() {
         binding = FragmentFollowersBinding.bind(view)
 
 
-        val detailUserViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(DetailUserViewModel::class.java)
+        val detailUserViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(
+            DetailUserViewModel::class.java)
 
 
         val layoutManager = LinearLayoutManager(requireActivity())
@@ -66,7 +67,6 @@ class FollowersFragment : Fragment() {
         }
         binding.rvUser.adapter = adapter
     }
-
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE

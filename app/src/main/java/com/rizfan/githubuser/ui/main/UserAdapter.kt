@@ -1,4 +1,4 @@
-package com.rizfan.githubuser.ui
+package com.rizfan.githubuser.ui.main
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rizfan.githubuser.data.response.ItemsItem
 import com.rizfan.githubuser.databinding.ItemRowUserBinding
+import com.rizfan.githubuser.ui.detailuser.DetailUserActivity
 
 class UserAdapter : ListAdapter<ItemsItem, UserAdapter.MyViewHolder>(DIFF_CALLBACK) {
 
@@ -22,7 +23,7 @@ class UserAdapter : ListAdapter<ItemsItem, UserAdapter.MyViewHolder>(DIFF_CALLBA
         holder.bind(user)
     }
 
-    class MyViewHolder(val binding: ItemRowUserBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MyViewHolder(private val binding: ItemRowUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(user: ItemsItem) {
             binding.tvUsername.text = user.login
             Glide.with(itemView.context)

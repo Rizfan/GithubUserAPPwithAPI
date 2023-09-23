@@ -1,17 +1,20 @@
-package com.rizfan.githubuser.ui
+package com.rizfan.githubuser.ui.main
 
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.rizfan.githubuser.data.response.GithubResponse
 import com.rizfan.githubuser.data.response.ItemsItem
 import com.rizfan.githubuser.data.retrofit.ApiConfig
+import com.rizfan.githubuser.ui.settings.SettingPreferences
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainViewModel : ViewModel() {
+class MainViewModel(private val pref: SettingPreferences) : ViewModel() {
 
     private val _listUser = MutableLiveData<List<ItemsItem>?>()
     val listUser: MutableLiveData<List<ItemsItem>?> = _listUser
@@ -19,8 +22,10 @@ class MainViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+    private val _errorMessage = MutableLiveData<String?>()
+    val errorMessage: LiveData<String?> = _errorMessage
+
     companion object {
-        const val TAG = "MainViewModel"
         private const val Q = "Rizfan"
     }
 
@@ -30,6 +35,7 @@ class MainViewModel : ViewModel() {
 
     private fun getUser() {
         _isLoading.value = true
+        _errorMessage.value = null
         val client = ApiConfig.getApiService().getUsers(Q)
         client.enqueue(object : Callback<GithubResponse> {
             override fun onResponse(
@@ -38,21 +44,27 @@ class MainViewModel : ViewModel() {
             ) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
-                    _listUser.value = response.body()?.items
+                    if (response.body()?.items?.size == 0) {
+                        _errorMessage.value = "User tidak ditemukan!"
+                        _listUser.value = null
+                    } else {
+                        _listUser.value = response.body()?.items
+                    }
                 } else {
-                    Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
+                    _errorMessage.value = "Gagal mendapatkan Data User!"
                 }
             }
 
             override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
                 _isLoading.value = false
-                Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
+                _errorMessage.value = "Gagal mendapatkan Data User!"
             }
         })
     }
 
     fun searchUser(query: String) {
         _isLoading.value = true
+        _errorMessage.value = null
         val client = ApiConfig.getApiService().getUsers(query)
         client.enqueue(object : Callback<GithubResponse> {
             override fun onResponse(
@@ -61,17 +73,31 @@ class MainViewModel : ViewModel() {
             ) {
                 _isLoading.value = false
                 if (response.isSuccessful) {
-                    _listUser.value = response.body()?.items
+                    if (response.body()?.items?.size == 0) {
+                        _errorMessage.value = "User tidak ditemukan!"
+                        _listUser.value = null
+                    } else {
+                        _listUser.value = response.body()?.items
+                    }
                 } else {
-                    Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
+                    _errorMessage.value = "Gagal mendapatkan Data User!"
                 }
             }
 
             override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
                 _isLoading.value = false
-                Toast.makeText(null, "Gagal mendapatkan Data User!", Toast.LENGTH_SHORT).show()
+                _errorMessage.value = "Gagal mendapatkan Data User!"
             }
         })
     }
 
+    fun getThemeSettings(): LiveData<Boolean> {
+        return pref.getThemeSetting().asLiveData()
+    }
+
+    fun saveThemeSetting(isDarkModeActive: Boolean) {
+        viewModelScope.launch {
+            pref.saveThemeSetting(isDarkModeActive)
+        }
+    }
 }
