@@ -14,37 +14,45 @@ import com.rizfan.githubuser.data.response.ItemsItem
 import com.rizfan.githubuser.databinding.ActivityMainBinding
 import com.rizfan.githubuser.ui.ViewModelFactory
 import com.rizfan.githubuser.ui.favoriteuser.FavoriteUsersActivity
-import com.rizfan.githubuser.ui.settings.SettingActivity
 import com.rizfan.githubuser.ui.settings.SettingPreferences
 import com.rizfan.githubuser.ui.settings.dataStore
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val pref = SettingPreferences.getInstance(application.dataStore)
         val mainViewModel by viewModels<MainViewModel> {
             ViewModelFactory.getInstance(this.application, pref)
         }
+
         val layoutManager = LinearLayoutManager(this)
         binding.rvUser.layoutManager = layoutManager
 
+        var theme = false
+
         mainViewModel.getThemeSettings().observe(this) { isDarkModeActive: Boolean ->
+            theme = isDarkModeActive
             if (isDarkModeActive) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                binding.topAppBar.menu.findItem(R.id.mnTheme).setIcon(R.drawable.baseline_brightness_2_24)
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                binding.topAppBar.menu.findItem(R.id.mnTheme).setIcon(R.drawable.ic_sun)
             }
         }
 
         mainViewModel.listUser.observe(this) { listUser ->
             setUserList(listUser)
+
         }
 
         mainViewModel.isLoading.observe(this) {
@@ -71,26 +79,21 @@ class MainActivity : AppCompatActivity() {
                 }
 
         }
-        binding.searchBar.inflateMenu(R.menu.menu_option)
-        binding.searchBar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
                 R.id.mnFavorite -> {
                     val intentFavorite =
                         Intent(this@MainActivity, FavoriteUsersActivity::class.java)
                     startActivity(intentFavorite)
                     true
                 }
-
-                R.id.mnSetting -> {
-                    val intentSetting = Intent(this@MainActivity, SettingActivity::class.java)
-                    startActivity(intentSetting)
+                R.id.mnTheme -> {
+                    mainViewModel.saveThemeSetting(!theme)
                     true
                 }
-
                 else -> false
             }
         }
-
     }
 
     private fun setUserList(listUser: List<ItemsItem>?) {
@@ -109,4 +112,8 @@ class MainActivity : AppCompatActivity() {
         binding.tvError.text = errorMessage
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

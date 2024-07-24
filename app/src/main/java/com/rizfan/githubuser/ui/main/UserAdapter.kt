@@ -10,8 +10,10 @@ import com.bumptech.glide.Glide
 import com.rizfan.githubuser.data.response.ItemsItem
 import com.rizfan.githubuser.databinding.ItemRowUserBinding
 import com.rizfan.githubuser.ui.detailuser.DetailUserActivity
+import com.rizfan.githubuser.ui.detailuser.DetailUserActivity.Companion.username
 
 class UserAdapter : ListAdapter<ItemsItem, UserAdapter.MyViewHolder>(DIFF_CALLBACK) {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding = ItemRowUserBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,15 +25,17 @@ class UserAdapter : ListAdapter<ItemsItem, UserAdapter.MyViewHolder>(DIFF_CALLBA
         holder.bind(user)
     }
 
-    class MyViewHolder(private val binding: ItemRowUserBinding) : RecyclerView.ViewHolder(binding.root) {
+    class MyViewHolder(private val binding: ItemRowUserBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(user: ItemsItem) {
             binding.tvUsername.text = user.login
             Glide.with(itemView.context)
                 .load(user.avatarUrl)
+                .circleCrop()
                 .into(binding.ivAvatar)
             itemView.setOnClickListener {
                 val intentDetail = Intent(itemView.context, DetailUserActivity::class.java)
-                intentDetail.putExtra(DetailUserActivity.username, user.login)
+                intentDetail.putExtra(username, user.login)
                 itemView.context.startActivity(intentDetail)
             }
         }

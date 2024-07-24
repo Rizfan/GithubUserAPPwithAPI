@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.rizfan.githubuser.data.response.DetailUserResponse
 import com.rizfan.githubuser.data.response.ItemsItem
+import com.rizfan.githubuser.data.response.RepoResponseItem
 import com.rizfan.githubuser.data.retrofit.ApiConfig
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,6 +24,9 @@ class DetailUserViewModel : ViewModel() {
 
     private val _listFollowing = MutableLiveData<List<ItemsItem>>()
     val listFollowing: MutableLiveData<List<ItemsItem>> = _listFollowing
+
+    private val _listRepo = MutableLiveData<List<RepoResponseItem>>()
+    val listRepo: MutableLiveData<List<RepoResponseItem>> = _listRepo
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> = _errorMessage
@@ -54,7 +58,7 @@ class DetailUserViewModel : ViewModel() {
         })
     }
 
-    fun getFollowers(username: String){
+    fun getFollowers(username: String) {
         _isLoading.value = true
         val client = ApiConfig.getApiService().getFollowers(username)
         client.enqueue(object : Callback<List<ItemsItem>> {
@@ -77,7 +81,7 @@ class DetailUserViewModel : ViewModel() {
         })
     }
 
-    fun getFollowings(username: String){
+    fun getFollowings(username: String) {
         _isLoading.value = true
         val client = ApiConfig.getApiService().getFollowing(username)
         client.enqueue(object : Callback<List<ItemsItem>> {
@@ -100,4 +104,26 @@ class DetailUserViewModel : ViewModel() {
         })
     }
 
+    fun getRepo(username: String) {
+        _isLoading.value = true
+        val client = ApiConfig.getApiService().getRepo(username)
+        client.enqueue(object : Callback<List<RepoResponseItem>> {
+            override fun onResponse(
+                call: Call<List<RepoResponseItem>>,
+                response: Response<List<RepoResponseItem>>
+            ) {
+                _isLoading.value = false
+                if (response.isSuccessful) {
+                    _listRepo.postValue(response.body())
+                } else {
+                    _errorMessage.value = "Gagal mendapatkan Data Repo!"
+                }
+            }
+
+            override fun onFailure(call: Call<List<RepoResponseItem>>, t: Throwable) {
+                _isLoading.value = false
+                _errorMessage.value = "Gagal mendapatkan Data Repo!"
+            }
+        })
+    }
 }

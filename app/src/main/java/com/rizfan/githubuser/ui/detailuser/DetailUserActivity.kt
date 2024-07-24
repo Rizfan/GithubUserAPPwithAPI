@@ -1,11 +1,14 @@
 package com.rizfan.githubuser.ui.detailuser
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
@@ -15,23 +18,25 @@ import com.rizfan.githubuser.data.database.FavoriteUser
 import com.rizfan.githubuser.data.response.DetailUserResponse
 import com.rizfan.githubuser.databinding.ActivityDetailUserBinding
 import com.rizfan.githubuser.ui.ViewModelFactory
+import com.rizfan.githubuser.ui.favoriteuser.FavoriteUsersActivity
 import com.rizfan.githubuser.ui.favoriteuser.FavoriteUsersViewModel
+import com.rizfan.githubuser.ui.main.MainViewModel
 import com.rizfan.githubuser.ui.settings.SettingPreferences
 import com.rizfan.githubuser.ui.settings.dataStore
 
 
 class DetailUserActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityDetailUserBinding
+    private var _binding: ActivityDetailUserBinding? = null
+    private val binding get() = _binding!!
 
     private var favoriteUser: FavoriteUser? = null
-
 
     @SuppressLint("StringFormatMatches")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityDetailUserBinding.inflate(layoutInflater)
+        _binding = ActivityDetailUserBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val detailUserViewModel = ViewModelProvider(
@@ -40,7 +45,8 @@ class DetailUserActivity : AppCompatActivity() {
         ).get(DetailUserViewModel::class.java)
 
         val pref = SettingPreferences.getInstance(application.dataStore)
-        val detailViewModel by viewModels<FavoriteUsersViewModel> {
+
+        val favoriteUserViewModel by viewModels<FavoriteUsersViewModel> {
             ViewModelFactory.getInstance(this.application, pref)
         }
 
@@ -53,6 +59,24 @@ class DetailUserActivity : AppCompatActivity() {
         val viewPager: ViewPager2 = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
 
+
+        val themeViewModel by viewModels<MainViewModel> {
+            ViewModelFactory.getInstance(this.application, pref)
+        }
+
+        var theme = false
+
+        themeViewModel.getThemeSettings().observe(this) { isDarkModeActive: Boolean ->
+            theme = isDarkModeActive
+            if (isDarkModeActive) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                binding.topAppBar.menu.findItem(R.id.mnTheme).setIcon(R.drawable.baseline_brightness_2_24)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                binding.topAppBar.menu.findItem(R.id.mnTheme).setIcon(R.drawable.ic_sun)
+            }
+        }
+
         favoriteUser = FavoriteUser()
 
         detailUserViewModel.detailUser.observe(this) { detailUser ->
@@ -61,6 +85,7 @@ class DetailUserActivity : AppCompatActivity() {
             val tabTittle = resources.getStringArray(R.array.tab_titles)
             tabTittle[0] = getString(R.string.followers, detailUser.followers)
             tabTittle[1] = getString(R.string.following, detailUser.following)
+            tabTittle[2] = getString(R.string.repository, detailUser.publicRepos)
 
             TabLayoutMediator(binding.tabs, viewPager) { tab, position ->
                 tab.text = tabTittle[position]
@@ -72,16 +97,17 @@ class DetailUserActivity : AppCompatActivity() {
                 favoriteUser?.avatarUrl = detailUser.avatarUrl.toString()
             }
         }
-        detailViewModel.getFavoriteUserByUsername(username.toString()).observe(this) {
+
+        favoriteUserViewModel.getFavoriteUserByUsername(username.toString()).observe(this) {
             if (it != null) {
                 binding.ivFavorite.setImageResource(R.drawable.ic_favorite)
                 binding.ivFavorite.setOnClickListener {
-                    detailViewModel.deleteFavoriteUser(username.toString())
+                    favoriteUserViewModel.deleteFavoriteUser(username.toString())
                 }
             } else {
                 binding.ivFavorite.setImageResource(R.drawable.baseline_favorite_border_24)
                 binding.ivFavorite.setOnClickListener {
-                    detailViewModel.setFavoriteUser(favoriteUser!!)
+                    favoriteUserViewModel.setFavoriteUser(favoriteUser!!)
                 }
             }
         }
@@ -92,6 +118,22 @@ class DetailUserActivity : AppCompatActivity() {
 
         detailUserViewModel.errorMessage.observe(this) {
             showError(it)
+        }
+
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.mnFavorite -> {
+                    val intentFavorite =
+                        Intent(this, FavoriteUsersActivity::class.java)
+                    startActivity(intentFavorite)
+                    true
+                }
+                R.id.mnTheme -> {
+                    themeViewModel.saveThemeSetting(!theme)
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -106,7 +148,7 @@ class DetailUserActivity : AppCompatActivity() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility =
-            if (isLoading) android.view.View.VISIBLE else android.view.View.GONE
+            if (isLoading) View.VISIBLE else View.GONE
     }
 
     private fun showError(errorMessage: String) {

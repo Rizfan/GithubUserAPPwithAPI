@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/Base.Theme.GithubUser"
     >
-    <group android:menuCategory="container">
+    <group android:menuCategory="container"
+        android:id="@+id/menu">
         <item
             android:id="@+id/mnFavorite"
             android:icon="@drawable/ic_favorite"
@@ -12,8 +13,10 @@
             android:contentDescription="@string/favorite"
             app:showAsAction="ifRoom" />
         <item
-            android:id="@+id/mnSetting"
-            android:title="@string/settings"
-            app:showAsAction="never" />
+            android:id="@+id/mnTheme"
+            android:icon="@drawable/ic_sun"
+            android:title="@string/theme"
+            android:contentDescription="@string/theme"
+            app:showAsAction="ifRoom" />
     </group>
 </menu>

@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [FavoriteUser::class], version = 1)
-abstract class FavoriteUserRoomDatabase: RoomDatabase() {
+abstract class FavoriteUserRoomDatabase : RoomDatabase() {
     abstract fun favoriteUserDao(): FavoriteUserDao
 
     companion object {
@@ -14,7 +14,7 @@ abstract class FavoriteUserRoomDatabase: RoomDatabase() {
         private var INSTANCE: FavoriteUserRoomDatabase? = null
 
         @JvmStatic
-        fun getDatabase(context:Context): FavoriteUserRoomDatabase {
+        fun getDatabase(context: Context): FavoriteUserRoomDatabase {
             if (INSTANCE == null) {
                 synchronized(FavoriteUserRoomDatabase::class.java) {
                     INSTANCE = Room.databaseBuilder(

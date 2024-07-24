@@ -10,26 +10,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rizfan.githubuser.R
 import com.rizfan.githubuser.data.response.ItemsItem
+import com.rizfan.githubuser.data.response.RepoResponseItem
 import com.rizfan.githubuser.databinding.FragmentFollowersBinding
 import com.rizfan.githubuser.ui.main.UserAdapter
 
-class FollowersFragment : Fragment() {
+class FollowersFragment : Fragment(R.layout.fragment_followers) {
 
-    private lateinit var binding: FragmentFollowersBinding
+    private var _binding: FragmentFollowersBinding? = null
+    private val binding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding = FragmentFollowersBinding.bind(view)
-
-
         val detailUserViewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory()).get(
             DetailUserViewModel::class.java)
 
-
         val layoutManager = LinearLayoutManager(requireActivity())
         binding.rvUser.layoutManager = layoutManager
-
 
         val position = arguments?.getInt(ARG_POSITION)
         val username = arguments?.getString(ARG_USERNAME)
@@ -46,16 +43,22 @@ class FollowersFragment : Fragment() {
                 showLoading(it)
             }
 
-        } else {
+        } else if(position == 2){
             detailUserViewModel.getFollowings(username.toString())
             detailUserViewModel.listFollowing.observe(viewLifecycleOwner) { listFollowing ->
                 setFollowList(listFollowing)
             }
-
             detailUserViewModel.isLoading.observe(viewLifecycleOwner) {
                 showLoading(it)
             }
-
+        }else{
+            detailUserViewModel.getRepo(username.toString())
+            detailUserViewModel.listRepo.observe(viewLifecycleOwner) { listRepo ->
+                setRepoList(listRepo)
+            }
+            detailUserViewModel.isLoading.observe(viewLifecycleOwner) {
+                showLoading(it)
+            }
         }
     }
 
@@ -68,6 +71,12 @@ class FollowersFragment : Fragment() {
         binding.rvUser.adapter = adapter
     }
 
+    private fun setRepoList(listRepo: List<RepoResponseItem>?) {
+        val adapter = RepoAdapter()
+        adapter.submitList(listRepo)
+        binding.rvUser.adapter = adapter
+    }
+
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
@@ -75,9 +84,17 @@ class FollowersFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_followers, container, false)
+//        return inflater.inflate(R.layout.fragment_followers, container, false)
+        _binding = FragmentFollowersBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
 

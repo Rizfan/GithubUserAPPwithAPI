@@ -9,7 +9,10 @@ import com.rizfan.githubuser.ui.favoriteuser.FavoriteUsersViewModel
 import com.rizfan.githubuser.ui.main.MainViewModel
 import com.rizfan.githubuser.ui.settings.SettingPreferences
 
-class ViewModelFactory private constructor(private val repository: FavoriteUserRepository, private val pref: SettingPreferences): ViewModelProvider.NewInstanceFactory()  {
+class ViewModelFactory private constructor(
+    private val repository: FavoriteUserRepository,
+    private val pref: SettingPreferences
+) : ViewModelProvider.NewInstanceFactory() {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(FavoriteUsersViewModel::class.java)) {

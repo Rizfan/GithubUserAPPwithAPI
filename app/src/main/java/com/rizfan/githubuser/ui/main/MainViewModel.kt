@@ -52,11 +52,13 @@ class MainViewModel(private val pref: SettingPreferences) : ViewModel() {
                     }
                 } else {
                     _errorMessage.value = "Gagal mendapatkan Data User!"
+                    _listUser.value = null
                 }
             }
 
             override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
                 _isLoading.value = false
+                _listUser.value = null
                 _errorMessage.value = "Gagal mendapatkan Data User!"
             }
         })
@@ -81,12 +83,14 @@ class MainViewModel(private val pref: SettingPreferences) : ViewModel() {
                     }
                 } else {
                     _errorMessage.value = "Gagal mendapatkan Data User!"
+                    _listUser.value = null
                 }
             }
 
             override fun onFailure(call: Call<GithubResponse>, t: Throwable) {
                 _isLoading.value = false
                 _errorMessage.value = "Gagal mendapatkan Data User!"
+                _listUser.value = null
             }
         })
     }

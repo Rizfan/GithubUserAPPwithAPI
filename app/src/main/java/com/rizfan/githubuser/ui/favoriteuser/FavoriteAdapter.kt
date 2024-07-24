@@ -10,9 +10,10 @@ import com.rizfan.githubuser.data.response.ItemsItem
 import com.rizfan.githubuser.databinding.ItemRowUserBinding
 import com.rizfan.githubuser.ui.detailuser.DetailUserActivity
 
-class FavoriteAdapter: RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
+class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
     private var listUser = ArrayList<ItemsItem>()
+
     @SuppressLint("NotifyDataSetChanged")
     fun setUserList(listUser: ArrayList<ItemsItem>) {
         this.listUser.clear()
@@ -20,11 +21,13 @@ class FavoriteAdapter: RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>(
         notifyDataSetChanged()
     }
 
-    inner class FavoriteViewHolder(private val binding: ItemRowUserBinding): RecyclerView.ViewHolder(binding.root)  {
+    inner class FavoriteViewHolder(private val binding: ItemRowUserBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(user: ItemsItem) {
             binding.tvUsername.text = user.login
             Glide.with(itemView.context)
                 .load(user.avatarUrl)
+                .circleCrop()
                 .into(binding.ivAvatar)
             itemView.setOnClickListener {
                 val intentDetail = Intent(itemView.context, DetailUserActivity::class.java)
